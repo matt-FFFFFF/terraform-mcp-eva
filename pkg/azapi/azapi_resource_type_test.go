@@ -1,30 +1,24 @@
 package azapi
 
 import (
-	"encoding/json"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/zclconf/go-cty/cty"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetAzAPIType_WithoutJsonPath(t *testing.T) {
-	schema, err := GetResourceJsonSchema("Microsoft.Resources/resourcegroups", "2024-07-01", "")
+	resourceType, err := getResourceType("Microsoft.Resources/resourcegroups", "2024-07-01", "")
 	require.NoError(t, err)
-	assert.NotEmpty(t, schema)
-	v := make(map[string]any)
-	require.NoError(t, json.Unmarshal([]byte(schema), &v))
-	require.Contains(t, v, "attributes")
-	attributes, ok := v["attributes"].(map[string]any)
-	require.True(t, ok)
-	require.Contains(t, attributes, "location")
-	location, ok := attributes["location"].(map[string]any)
-	require.True(t, ok)
-	require.Contains(t, location, "type")
-	assert.Equal(t, "string", location["type"])
+	require.True(t, resourceType.IsObjectType())
+	require.True(t, resourceType.HasAttribute("location"))
+	locationType := resourceType.AttributeType("location")
+	require.Equal(t, cty.String, locationType)
 }
 
-func TestGetAzAPIType_WithJsonPath(t *testing.T) {
+func TestGetAzAPIType_WithPath(t *testing.T) {
 	cases := []struct {
 		desc         string
 		resourceType string
@@ -65,7 +59,7 @@ func TestGetAzAPIType_WithJsonPath(t *testing.T) {
 			caseName = strings.Join([]string{c.resourceType, c.apiVersion, c.path}, "-")
 		}
 		t.Run(caseName, func(t *testing.T) {
-			schema, err := GetResourceJsonSchema(c.resourceType, c.apiVersion, c.path)
+			schema, err := GetResourceSchema(c.resourceType, c.apiVersion, c.path)
 			require.NoError(t, err)
 			assert.Equal(t, c.expectedType, schema)
 		})

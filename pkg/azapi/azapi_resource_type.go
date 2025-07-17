@@ -11,14 +11,22 @@ import (
 	"strings"
 )
 
-func GetResourceJsonSchema(resourceType, apiVersion, path string) (string, error) {
+func GetResourceSchema(resourceType, apiVersion, path string) (string, error) {
+	t, err := getResourceType(resourceType, apiVersion, path)
+	if err != nil {
+		return "", err
+	}
+	return compactGoType(t.GoString()), nil
+}
+
+func getResourceType(resourceType, apiVersion, path string) (cty.Type, error) {
 	apiType, err := azapi.GetAzApiType(resourceType, apiVersion)
 	if err != nil {
-		return "", fmt.Errorf("failed to get azapi type for resource %s api-version %s: %w", resourceType, apiVersion, err)
+		return cty.NilType, fmt.Errorf("failed to get azapi type for resource %s api-version %s: %w", resourceType, apiVersion, err)
 	}
 	bodyType, ok := apiType.Body.Type.(*types.ObjectType)
 	if !ok {
-		return "", fmt.Errorf("resource body type is not an object type")
+		return cty.NilType, fmt.Errorf("resource body type is not an object type")
 	}
 	blockSchema, err := azapi.ConvertAzApiObjectTypeToTerraformJsonSchemaAttribute(types.ObjectProperty{
 		Type: &types.TypeReference{
@@ -26,21 +34,20 @@ func GetResourceJsonSchema(resourceType, apiVersion, path string) (string, error
 		},
 	})
 	if err != nil {
-		return "", fmt.Errorf("failed to convert az api object type to terraform json schema: %w", err)
+		return cty.NilType, fmt.Errorf("failed to convert az api object type to terraform json schema: %w", err)
 	}
 	typeDesc, err := toCtyType(blockSchema)
 	if err != nil {
-		return "", fmt.Errorf("failed to convert block schema to cty type: %w", err)
+		return cty.NilType, fmt.Errorf("failed to convert block schema to cty type: %w", err)
 	}
-	goType := compactGoType(typeDesc.GoString())
 	if path == "" {
-		return goType, nil
+		return typeDesc, nil
 	}
 	t, err := queryTypeInBlock(blockSchema, path)
 	if err != nil {
-		return "", fmt.Errorf("failed to query type in block for path %s: %w", path, err)
+		return typeDesc, fmt.Errorf("failed to query type in block for path %s: %w", path, err)
 	}
-	return compactGoType(t.GoString()), nil
+	return t, nil
 }
 
 func compactGoType(goType string) string {
