@@ -1,3 +1,25 @@
-# Terraform MCP Donald
+Terraform MCP Eva
+# Terraform MCP Eva
 
-Donald stands for "DevelOper assistaNt for terrAform moduLe Development", which is a tool designed to help Terraform developers by providing schema query, policy validation, code formatting, and other features. No one knows Azure better than Donald.
+Eva stands for "tErraform deVeloper Assistant", which is a tool designed to help Terraform developers by providing schema query, policy validation, code formatting, and other features.
+
+To try this mcp in vscode:
+
+```json
+{
+    "servers": {
+        "terraform-mcp-eva": {
+            "type": "stdio",
+            "command": "docker",
+            "args": [
+                "run",
+                "-i",
+                "--rm",
+                "-e",
+                "TRANSPORT_MODE=stdio",
+                "ghcr.io/lonegunmanb/terraform-mcp-eva"
+            ],
+        }
+    }
+}
+```
