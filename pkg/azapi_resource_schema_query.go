@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
+	"github.com/lonegunmanb/terraform-mcp-eva/pkg/azapi"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"terraform-mcp-eva/pkg/azapi"
 )
 
 type AzAPIResourceSchemaQueryParam struct {
@@ -21,7 +22,7 @@ func QueryAzAPIResourceSchema(ctx context.Context, cc *mcp.ServerSession, params
 		return nil, errors.New("`resource_type` and `api_version` are required parameters")
 	}
 	path := params.Arguments.Path
-	schema, err := azapi.GetResourceJsonSchema(resourceType, apiVersion, path)
+	schema, err := azapi.GetResourceSchema(resourceType, apiVersion, path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get resource schema for %s@%s: %w", resourceType, apiVersion, err)
 	}
