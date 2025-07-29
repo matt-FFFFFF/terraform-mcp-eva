@@ -14,7 +14,10 @@ RUN go mod download && \
   GOOS=linux CGO_ENABLED=0 go build -o terraform-mcp-eva .
 
 # Runner stage
-FROM busybox:latest
+FROM alpine:latest
+
+# Install ca-certificates for HTTPS requests
+RUN apk --no-cache add ca-certificates
 
 # Create a non-root user
 RUN adduser -D -s /bin/sh appuser
