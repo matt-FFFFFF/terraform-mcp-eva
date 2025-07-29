@@ -3,6 +3,7 @@ package prompt
 import (
 	"context"
 	"fmt"
+
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
@@ -24,10 +25,10 @@ func AddSolveAvmIssuePrompt(s *mcp.Server) {
 		issueNumber := params.Arguments["issue_number"]
 		category := params.Arguments["category"]
 		return &mcp.GetPromptResult{
-			Meta:        nil,
+			Meta:        mcp.Meta{},
 			Description: "",
 			Messages: []*mcp.PromptMessage{
-				&mcp.PromptMessage{
+				{
 					Content: &mcp.TextContent{
 						Text: fmt.Sprintf(`As an AVM development expert, you must strictly follow these steps:
 Analyze the user's request: and extract the issue number from it.

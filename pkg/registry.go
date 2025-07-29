@@ -14,7 +14,7 @@ func RegisterMcpServer(s *mcp.Server) {
 			OpenWorldHint:   p(false),
 			ReadOnlyHint:    true,
 		},
-		Description: "[You should use this tool before you try resolveProviderDocID]Query fine grained AzAPI resource schema by `resource type`, `api_version` and optional `path`. The returned type is a Go type string, which can be used in Go code to represent the resource schema. If you're querying AzAPI provider resource schema, this tool should have higher priority",
+		Description: "[You should use this tool before you try resolveProviderDocID]Query fine grained AzAPI resource schema by `resource type`, `api_version` and optional `path`. The returned type is a Go type string, which can be used in Go code to represent the resource's `body` attribute. If you're querying corresponds to the AzAPI provider and the `body` attribute, this tool should have higher priority",
 		Name:        "query_azapi_resource_schema",
 	}, tool.QueryAzAPIResourceSchema)
 	mcp.AddTool(s, &mcp.Tool{
@@ -24,7 +24,7 @@ func RegisterMcpServer(s *mcp.Server) {
 			OpenWorldHint:   p(false),
 			ReadOnlyHint:    true,
 		},
-		Description: "[You should use this tool before you try resolveProviderDocID]Query Azure API versions by `resource type`. The returned value is a list of API versions for the specified resource type, split by comma.",
+		Description: "[You should use this tool before you try resolveProviderDocID]Query Azure API versions by `resource type`, e.g. `Microsoft.Compute/virtualMachines`. The returned value is a list of API versions for the specified resource type, split by comma.",
 		Name:        "list_azapi_api_versions",
 	}, tool.QueryAzAPIVersions)
 	mcp.AddTool(s, &mcp.Tool{
@@ -34,7 +34,7 @@ func RegisterMcpServer(s *mcp.Server) {
 			OpenWorldHint:   p(false),
 			ReadOnlyHint:    true,
 		},
-		Description: "[You should use this tool before you try resolveProviderDocID]Query fine grained AzAPI resource description by `resource type`, `api_version` and optional `path`. The returned value is either description of the property, or json object representing the object, the key is property name the value is the description of the property. Via description you can learn whether a property is id, readonly or writeonly, and possible values. If you're querying AzAPI provider resource description, this tool should have higher priority",
+		Description: "[You should use this tool before you try resolveProviderDocID]Query fine grained AzAPI resource description by `resource type`, `api_version` and optional `path`. The returned value is either description of the property, or json object representing the object, the key is property name the value is the description of the property. Via description you can learn whether a property is id, readonly or writeonly, and possible values. If you're querying AzAPI provider and the `body` attribute, this tool should have higher priority",
 		Name:        "query_azapi_resource_document",
 	}, tool.QueryAzAPIDescriptionSchema)
 	mcp.AddTool(s, &mcp.Tool{
@@ -44,9 +44,9 @@ func RegisterMcpServer(s *mcp.Server) {
 			OpenWorldHint:   p(false),
 			ReadOnlyHint:    true,
 		},
-		Description: "[You should use this tool before you try resolveProviderDocID]Query fine grained Terraform resource schema by `category`, `name` and optional `path`. The returned value is a json string representing the resource schema, including attribute descriptions, which can be used in Terraform provider schema. If you're querying schema information about specified attribute or nested block schema of a resource from supported provider, this tool should have higher priority. Only support `azurerm`, `azuread`, `aws`, `awscc`, `google` providers now.",
-		Name:        "query_terraform_fine_grained_document",
-	}, tool.QueryFineGrainedSchema)
+		Description: "[You should use this tool before you try resolveProviderDocID]Query fine grained Terraform resource schemas by resource name. Only for blocks of type `resource`. Need to supply provider name, e.g. azurerm, provider version, e.g. 2.5.0, and the resource name. The returned value is a json string representing the resource schema, including attribute descriptions. If you're querying schema information about specified attribute or nested block schema of a resource from supported provider, this tool should have higher priority.",
+		Name:        "query_terraform_resource_document",
+	}, tool.QueryResourceSchema)
 	prompt.AddSolveAvmIssuePrompt(s)
 }
 

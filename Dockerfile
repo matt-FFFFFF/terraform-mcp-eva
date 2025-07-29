@@ -1,16 +1,17 @@
 # Builder stage
-FROM golang:latest AS builder
-
+FROM --platform=${BUILDPLATFORM} golang:1.24.5 AS builder
+ARG TARGETARCH
+ENV GOARCH=${TARGETARCH}
 # Set working directory
-WORKDIR /app
+WORKDIR /src
 
 # Copy source code
 COPY . .
 
 # Download dependencies and build the application using TARGETARCH for multi-platform builds
-ARG TARGETARCH
+
 RUN go mod download && \
-    GOOS=linux GOARCH=${TARGETARCH} CGO_ENABLED=0 go build -o terraform-mcp-eva .
+  GOOS=linux CGO_ENABLED=0 go build -o terraform-mcp-eva .
 
 # Runner stage
 FROM busybox:latest
@@ -22,10 +23,10 @@ RUN adduser -D -s /bin/sh appuser
 WORKDIR /home/appuser
 
 # Copy the binary from builder stage
-COPY --from=builder /app/terraform-mcp-eva .
+COPY --chown=root:root --from=builder /src/terraform-mcp-eva .
 
-# Change ownership to appuser
-RUN chown appuser:appuser terraform-mcp-eva
+# Set permissions for the binary
+RUN chmod 755 terraform-mcp-eva
 
 # Switch to non-root user
 USER appuser
