@@ -30,23 +30,31 @@ func AddSolveAvmIssuePrompt(s *mcp.Server) {
 			Messages: []*mcp.PromptMessage{
 				{
 					Content: &mcp.TextContent{
-						Text: fmt.Sprintf(`As an AVM development expert, you must strictly follow these steps:
+						Annotations: &mcp.Annotations{
+							Audience: []mcp.Role{
+								"assistant",
+							},
+							Priority: 1.0,
+						},
+						Text: fmt.Sprintf(`As an Azure Verified Modules development expert, you must strictly follow these steps:
 Analyze the user's request: and extract the issue number from it.
 The issue number is %s, and the category is %s.
 Use git checkout -b <category>/<issue-number> to create and switch to a new branch.
-Create a new file named 'todo.md' in the root directory of the repository, write down your analysis of the issue, and provide a detailed plan on how to resolve it, then ask the user to review it.
-If you want to create or update Terraform blocks, you must consul the mcp server to get the latest Terraform schema and provider information first. When you want to query the schema and document, try tools have 'query_' prefix first. If you want to query azapi provider's schema or document, try tools have 'query_azapi_' prefix first.'
-After the user has agreed with your plan, you can make all necessary code changes to resolve the issue. Remember to update the 'todo.md' file with the progress you made.
-If you are about to create new example under 'examples' directory, please ask for permission first. Don't forget to add '_footer.md' and '_header.md' files like other examples.'
-[CRITICAL STEP] After all changes are complete, you must execute:
-1. ./avm pre-commit (or './avm.ps1 pre-commit' if you on Windows').
-2. the following sub-checks: ['tfvalidatecheck', 'lint'] with './avm ' or './avm.ps1
+Create a new file named 'todo.md' in the root directory of the repository, write down your analysis of the issue, and provide a detailed plan on how to resolve it. Make sure to refer to this plan to track progress.
+If you want to create or update Terraform blocks, you must consult the mcp server to get the latest Terraform schema and provider information first. When you want to query the schema and document, try tools have 'query_' prefix first. If you want to query azapi provider's resource schema, try tools have 'query_azapi_' prefix first.'
+Remember to update the 'todo.md' file with the progress you made.
+Only create new examples if there is a significant new feature being added to the module. Don't forget to add '_footer.md' and '_header.md' files like other examples.'
+[IMPORTANT REFERENCE] The Azure Verified Modules specification index is available at this location: https://azure.github.io/Azure-Verified-Modules/llms.txt. Download this file and retrieve any relevant information from it. The specification references starting with TF* are pertinent. Any BC* should be ignored.
+[CRITICAL STEP] After all changes are complete, you must execute in a bash shell:
+1. ./avm pre-commit
+
 If checks succeeds too then you should:
 
-1. commit the changes with proper commit message, do not commit 'todo.md' file.
+1. commit the changes with proper commit message, DO NOT commit 'todo.md' file, you can remove this.
 2. propose creating a Pull Request (PR). If it fails, report the failure message, try to solve the issues with best effort.
-Now, please begin execution.`, issueNumber, category),
-					},
+
+Now, please begin execution.`, issueNumber, category,
+						)},
 					Role: "user",
 				},
 			},

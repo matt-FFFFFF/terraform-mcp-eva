@@ -18,7 +18,7 @@ To try this mcp in vscode:
                 "-e",
                 "TRANSPORT_MODE=stdio",
                 "--pull=always",
-                "ghcr.io/matt-FFFFFF/terraform-mcp-eva"
+                "ghcr.io/matt-ffffff/terraform-mcp-eva"
             ]
         }
     }

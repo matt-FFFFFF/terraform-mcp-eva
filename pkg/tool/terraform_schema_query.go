@@ -12,20 +12,22 @@ const (
 	blockTypeResource  = "resource"
 	blockTypeData      = "data"
 	blockTypeEphemeral = "ephemeral"
+	blockTypeProvider  = "provider"
 )
 
 type FineGrainedSchemaQueryParam struct {
-	BlockType         string `json:"block_type" jsonschema:"Terraform block type, possible values: resource, data, ephemeral"`
+	BlockType         string `json:"block_type" jsonschema:"Terraform block type, possible values: provider, resource, data, ephemeral"`
 	ProviderName      string `json:"provider_name" jsonschema:"The name of the provider: azapi, azurerm, etc. This is the first segment of the block label, e.g. for azurerm_virtual_machine it's azurerm."`
-	ProviderNamespace string `json:"provider_namespace" jsonschema:"The namespace of the provider, e.g. Azure, hashicorp, etc. This can be found in the terraform.required_providers block."`
-	ProviderVersion   string `json:"provider_version" jsonschema:"The version of the provider, e.g. 2.5.0. Can be obtained by running 'terraform providers' command."`
-	BlockLabel        string `json:"block_label" jsonschema:"The first label of the block, e.g. azurerm_virtual_machine"`
+	ProviderNamespace string `json:"provider_namespace" jsonschema:"The namespace of the provider, e.g. Azure, hashicorp, etc. Look this up in the terraform.required_providers block."`
+	ProviderVersion   string `json:"provider_version" jsonschema:"The version of the provider, e.g. 2.5.0. MUST be obtained by running 'terraform providers' command."`
+	BlockLabel        string `json:"block_label" jsonschema:"The first label of the block, e.g. azurerm_virtual_machine. Not required for provider block type."`
 }
 
 var validCategories = map[string]struct{}{
 	blockTypeResource:  {},
 	blockTypeData:      {},
 	blockTypeEphemeral: {},
+	blockTypeProvider:  {},
 }
 
 func QueryResourceSchema(ctx context.Context, cc *mcp.ServerSession, params *mcp.CallToolParamsFor[FineGrainedSchemaQueryParam]) (*mcp.CallToolResultFor[any], error) {
@@ -56,6 +58,8 @@ func QueryResourceSchema(ctx context.Context, cc *mcp.ServerSession, params *mcp
 		returnData, err = server.GetDataSourceSchema(req, params.Arguments.BlockLabel)
 	case blockTypeEphemeral:
 		returnData, err = server.GetEphemeralResourceSchema(req, params.Arguments.BlockLabel)
+	case blockTypeProvider:
+		returnData, err = server.GetProviderSchema(req)
 	}
 
 	if err != nil || len(returnData) == 0 {

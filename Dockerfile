@@ -24,6 +24,7 @@ RUN adduser -D -s /bin/sh appuser
 
 # Set working directory
 WORKDIR /home/appuser
+RUN chown appuser /home/appuser && chmod 755 /home/appuser
 
 # Copy the binary from builder stage
 COPY --chown=root:root --from=builder /src/terraform-mcp-eva .

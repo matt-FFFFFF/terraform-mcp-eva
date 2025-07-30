@@ -15,9 +15,9 @@ import (
 
 func main() {
 	l := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		Level:     slog.LevelInfo,
-		AddSource: false,
+		Level: slog.LevelWarn,
 	}))
+
 	mode := flag.String("mode", getenv("TRANSPORT_MODE", "stdio"), "transport mode, can be `stdio` or `streamable-http`")
 	host := flag.String("host", getenv("TRANSPORT_HOST", "127.0.0.1"), "host for streamable-http server")
 	port := flag.String("port", getenv("TRANSPORT_PORT", "8080"), "port for streamable-http server")
@@ -28,14 +28,15 @@ func main() {
 		Version: "0.1.0",
 		Title:   "Terraform provider MCP Server",
 	}, nil)
+
 	pkg.RegisterMcpServer(server)
 
-	ctx := context.Background()
-	providerSchemaServer := tfpluginschema.NewServer(l)
-	ctx = context.WithValue(ctx, tfpluginschema.ContextKey{}, providerSchemaServer)
+	providerSchemaServer := tfpluginschema.NewServer(nil)
 
 	switch *mode {
 	case "stdio":
+		ctx := context.Background()
+		ctx = context.WithValue(ctx, tfpluginschema.ContextKey{}, providerSchemaServer)
 		if err := server.Run(ctx, mcp.NewStdioTransport()); err != nil {
 			l.Error(err.Error())
 		}
