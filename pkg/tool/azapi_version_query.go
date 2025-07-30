@@ -11,7 +11,7 @@ import (
 )
 
 type AzAPIVersionQueryParam struct {
-	ResourceType string `json:"resource_type" jsonschema:"Azure resource type, for example: Microsoft.Compute/virtualMachines""`
+	ResourceType string `json:"resource_type" jsonschema:"Azure resource type, for example: Microsoft.Compute/virtualMachines"`
 }
 
 func QueryAzAPIVersions(ctx context.Context, cc *mcp.ServerSession, params *mcp.CallToolParamsFor[AzAPIVersionQueryParam]) (*mcp.CallToolResultFor[any], error) {
