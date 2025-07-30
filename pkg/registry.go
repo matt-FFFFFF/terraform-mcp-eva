@@ -1,8 +1,8 @@
 package pkg
 
 import (
-	"github.com/lonegunmanb/terraform-mcp-eva/pkg/prompt"
-	"github.com/lonegunmanb/terraform-mcp-eva/pkg/tool"
+	"github.com/matt-FFFFFF/terraform-mcp-eva/pkg/prompt"
+	"github.com/matt-FFFFFF/terraform-mcp-eva/pkg/tool"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

@@ -1,4 +1,4 @@
-module github.com/lonegunmanb/terraform-mcp-eva
+module github.com/matt-FFFFFF/terraform-mcp-eva
 
 go 1.24.5
 

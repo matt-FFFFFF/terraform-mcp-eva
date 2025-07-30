@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/lonegunmanb/terraform-mcp-eva/pkg"
+	"github.com/matt-FFFFFF/terraform-mcp-eva/pkg"
 	"github.com/matt-FFFFFF/tfpluginschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lonegunmanb/terraform-mcp-eva/pkg/azapi"
+	"github.com/matt-FFFFFF/terraform-mcp-eva/pkg/azapi"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
